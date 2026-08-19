@@ -1,0 +1,5 @@
+streamlit>=1.41,<2.0
+PyMuPDF>=1.25,<2.0
+pandas>=2.2,<3.0
+pytest>=8.3,<10.0
+opencc-python-reimplemented>=0.1.7,<0.2
