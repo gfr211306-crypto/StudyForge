@@ -1,6 +1,7 @@
 # StudyForge
 
 [![CI](https://github.com/gfr211306-crypto/StudyForge/actions/workflows/ci.yml/badge.svg)](https://github.com/gfr211306-crypto/StudyForge/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/studyforge-vocab.svg)](https://pypi.org/project/studyforge-vocab/)
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.61.1-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -12,6 +13,29 @@ Streamlit Web App、CLI 與 Python API，可將英文 PDF 自動整理成可複�
 **PDF → 文字擷取 → 重要英文單字 → 繁體中文釋義／詞性／原文例句 → Anki CSV**
 
 全程不需要 API key，也不會把文件內容送往翻譯或 AI API。
+
+## Quick Start
+
+從正式 PyPI 安裝：
+
+```bash
+pip install studyforge-vocab
+```
+
+使用 CLI 從 PDF 產生 Anki CSV：
+
+```bash
+studyforge extract file.pdf --limit 30 --format anki
+```
+
+或在 Python 中使用：
+
+```python
+from studyforge import analyze_pdf
+
+result = analyze_pdf("file.pdf", limit=30, mode="ielts")
+print(result.items)
+```
 
 ## Live Demo
 
@@ -83,7 +107,13 @@ StudyForge 不使用生成式 AI。中文意思、詞性、音標與詞形資料
 
 ### 安裝 CLI 與 Python package
 
-PyPI 套件尚未正式發布。從原始碼安裝：
+從正式 PyPI 安裝：
+
+```bash
+python -m pip install studyforge-vocab
+```
+
+如果要參與開發，再從原始碼安裝 editable package：
 
 ```bash
 git clone https://github.com/gfr211306-crypto/StudyForge.git

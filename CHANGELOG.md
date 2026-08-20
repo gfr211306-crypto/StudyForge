@@ -7,6 +7,7 @@
 ### Added
 
 - Reusable `StudyForge` Python API shared by Web and CLI
+- Published to the official PyPI index as `studyforge-vocab==0.2.0`
 - `studyforge extract` CLI with Anki CSV, ordinary CSV, and JSON output
 - IELTS vocabulary mode using explicit dictionary IELTS tags
 - CEFR A1-C2 labels from CEFR-J and Octanove vocabulary profiles
