@@ -12,6 +12,7 @@
 - CEFR A1-C2 labels from CEFR-J and Octanove vocabulary profiles
 - Explicit `unknown` CEFR result for absent or ambiguous headwords
 - `pyproject.toml`, console-script metadata, package data, wheel and sdist build
+- PyPI Trusted Publishing workflow using GitHub OIDC and the `pypi` environment
 - GitHub Actions CI，測試 Python 3.11 與 3.12
 - Bug Report、Feature Request、PR templates
 - Dependabot、CONTRIBUTING、SECURITY 與 Code of Conduct
