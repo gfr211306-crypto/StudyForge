@@ -1,0 +1,76 @@
+name: Bug Report
+description: 回報可重現的錯誤或非預期行為
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝你協助改善 StudyForge。請勿附上含個資、機密內容或受版權保護的完整 PDF。
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前確認
+      options:
+        - label: 我已搜尋現有 Issues，沒有找到相同問題。
+          required: true
+        - label: 我已移除 PDF、截圖與日誌中的個資或機密內容。
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 問題描述
+      description: 請清楚描述發生了什麼，以及你原本預期的結果。
+      placeholder: 實際結果與預期結果……
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 重現步驟
+      placeholder: |
+        1. 啟動 StudyForge
+        2. 上傳……
+        3. 選擇……
+        4. 發生……
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: 執行環境
+      options:
+        - Streamlit Community Cloud
+        - Windows 本機
+        - macOS 本機
+        - Linux 本機
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: versions
+    attributes:
+      label: 系統與版本
+      description: 例如 Windows 11、Python 3.12、Chrome 版本。
+      placeholder: Windows 11 / Python 3.12 / Chrome
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 錯誤訊息或錯誤代碼
+      description: 請貼上必要片段，並先移除路徑、帳號與文件內容等敏感資訊。
+      render: shell
+
+  - type: textarea
+    id: context
+    attributes:
+      label: 其他資訊
+      description: 可提供已去識別化的截圖或最小測試 PDF 產生方式。

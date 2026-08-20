@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import re
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class PdfDocument:
-    """Text and metadata extracted from a PDF."""
+    """Text extracted from a PDF."""
 
     pages: tuple[str, ...]
-    metadata: dict[str, str] = field(default_factory=dict)
 
     @property
     def full_text(self) -> str:
@@ -20,8 +20,6 @@ class PdfDocument:
 
     @property
     def english_word_count(self) -> int:
-        import re
-
         return len(re.findall(r"[A-Za-z]+(?:['’-][A-Za-z]+)?", self.full_text))
 
 

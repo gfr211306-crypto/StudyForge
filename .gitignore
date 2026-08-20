@@ -2,17 +2,35 @@
 __pycache__/
 *.py[cod]
 *.pyo
+*.egg-info/
+.python-version.local
 .pytest_cache/
 .coverage
+.coverage.*
+coverage.xml
 htmlcov/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+build/
+dist/
 
 # Virtual environments
 .venv/
 venv/
 env/
+.venv-*/
 
-# Streamlit secrets
+# Secrets and local environment files
 .streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
 
 # IDE / OS
 .idea/
@@ -25,5 +43,10 @@ desktop.ini
 data/stardict.csv
 data/*.db-shm
 data/*.db-wal
+data/*.db-journal
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite-journal
 *.tmp
 *.log
+~$*

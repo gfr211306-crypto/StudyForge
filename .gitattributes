@@ -1,2 +1,18 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Keep scripts usable on their native platforms.
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.python-version text eol=lf
+requirements*.txt text eol=lf
+*.bat text eol=crlf
+*.py text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.md text eol=lf
+
+# Generated assets must never be modified by line-ending conversion.
+*.db binary
+*.pdf binary

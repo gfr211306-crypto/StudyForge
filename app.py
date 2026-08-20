@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import hashlib
+import logging
+import re
+import uuid
 from pathlib import Path
 
 import pandas as pd
@@ -8,12 +11,19 @@ import streamlit as st
 
 from studyforge.dictionary import DictionaryStore
 from studyforge.exporter import build_anki_csv
-from studyforge.pdf_reader import PdfReadError, extract_pdf_text
+from studyforge.pdf_reader import (
+    MAX_PDF_BYTES,
+    MAX_PDF_PAGES,
+    PdfReadError,
+    extract_pdf_text,
+)
+from studyforge.presentation import build_word_card_html
 from studyforge.vocabulary import LEVEL_LABELS, analyze_vocabulary
 
 
 APP_ROOT = Path(__file__).resolve().parent
 DICTIONARY_PATH = APP_ROOT / "data" / "studyforge_dictionary.db"
+LOGGER = logging.getLogger("studyforge")
 
 
 def apply_theme() -> None:
@@ -133,16 +143,13 @@ def get_dictionary(path: str) -> DictionaryStore:
     return DictionaryStore(Path(path))
 
 
-@st.cache_data(show_spinner=False)
 def process_pdf(
     file_bytes: bytes,
-    file_hash: str,
     max_words: int,
     level: str,
     min_occurrences: int,
     dictionary_path: str,
 ):
-    del file_hash  # Cache key only; the bytes remain the real input.
     document = extract_pdf_text(file_bytes)
     dictionary = get_dictionary(dictionary_path)
     words = analyze_vocabulary(
@@ -153,6 +160,12 @@ def process_pdf(
         min_occurrences=min_occurrences,
     )
     return document, words
+
+
+def safe_download_name(original_name: str) -> str:
+    stem = Path(original_name).stem[:80]
+    safe_stem = re.sub(r"[^\w.-]+", "_", stem, flags=re.UNICODE).strip("._")
+    return f"{safe_stem or 'studyforge'}_anki.csv"
 
 
 def result_dataframe(words) -> pd.DataFrame:
@@ -234,7 +247,10 @@ def main() -> None:
             help="短篇 PDF 建議設為 1；長篇教材可提高到 2 或 3。",
         )
         st.divider()
-        st.caption("🔒 PDF 只在目前執行網站的電腦記憶體中處理，不會由本專案主動上傳到第三方服務。")
+        st.caption(
+            "🔒 PDF 只會傳送到目前執行 StudyForge 的伺服器處理，"
+            "不會送往翻譯或 AI API。若使用公開部署，請勿上傳機密文件。"
+        )
         dictionary = get_dictionary(str(DICTIONARY_PATH))
         if dictionary.using_fallback:
             st.warning("目前使用精簡內建詞典。重新執行安裝腳本可建立完整版離線詞典。")
@@ -246,10 +262,15 @@ def main() -> None:
         "拖曳 PDF 到這裡，或點擊選擇檔案",
         type=["pdf"],
         accept_multiple_files=False,
-        help="目前僅處理內含可選取文字的 PDF；掃描圖片型 PDF 需要先做 OCR。",
+        help=(
+            f"上限 {MAX_PDF_BYTES // (1024 * 1024)} MB、{MAX_PDF_PAGES} 頁。"
+            "目前僅處理內含可選取文字的 PDF；掃描圖片型 PDF 需要先做 OCR。"
+        ),
     )
 
     if uploaded_file is None:
+        st.session_state.pop("analysis_key", None)
+        st.session_state.pop("analysis_result", None)
         st.info("請先上傳一份英文 PDF。你的整理結果會顯示在這裡。", icon="👆")
         with st.expander("哪些 PDF 最適合？"):
             st.markdown(
@@ -263,24 +284,37 @@ def main() -> None:
 
     file_bytes = uploaded_file.getvalue()
     file_hash = hashlib.sha256(file_bytes).hexdigest()
+    analysis_key = (file_hash, max_words, level, min_occurrences)
 
     try:
-        with st.spinner("正在閱讀 PDF 並整理重要單字…"):
-            document, words = process_pdf(
-                file_bytes,
-                file_hash,
-                max_words,
-                level,
-                min_occurrences,
-                str(DICTIONARY_PATH),
-            )
+        if (
+            st.session_state.get("analysis_key") != analysis_key
+            or "analysis_result" not in st.session_state
+        ):
+            st.session_state.pop("analysis_key", None)
+            st.session_state.pop("analysis_result", None)
+            with st.spinner("正在閱讀 PDF 並整理重要單字…"):
+                result = process_pdf(
+                    file_bytes,
+                    max_words,
+                    level,
+                    min_occurrences,
+                    str(DICTIONARY_PATH),
+                )
+            st.session_state["analysis_key"] = analysis_key
+            st.session_state["analysis_result"] = result
+        document, words = st.session_state["analysis_result"]
     except PdfReadError as exc:
         st.error(str(exc), icon="⚠️")
         return
-    except Exception as exc:  # Keep the UI friendly while retaining debug details.
-        st.error("處理 PDF 時發生未預期錯誤。請換一份 PDF 再試一次。", icon="⚠️")
-        with st.expander("技術資訊"):
-            st.exception(exc)
+    except Exception:
+        error_id = uuid.uuid4().hex[:8]
+        LOGGER.exception("Unhandled PDF processing error [%s]", error_id)
+        st.error(
+            "處理 PDF 時發生未預期錯誤。請換一份 PDF 再試一次。"
+            f"若問題持續發生，請在回報時附上錯誤代碼：{error_id}",
+            icon="⚠️",
+        )
         return
 
     if not words:
@@ -290,7 +324,7 @@ def main() -> None:
         )
         return
 
-    st.success(f"完成！已從「{uploaded_file.name}」整理出 {len(words)} 個學習單字。")
+    st.success(f"完成！已整理出 {len(words)} 個學習單字。")
     metric_columns = st.columns(4)
     metric_columns[0].metric("PDF 頁數", document.page_count)
     metric_columns[1].metric("英文詞數", f"{document.english_word_count:,}")
@@ -320,7 +354,7 @@ def main() -> None:
 
     selected_df = edited_df[edited_df["加入 Anki"] == True].copy()  # noqa: E712
     csv_data = build_anki_csv(selected_df.to_dict(orient="records"))
-    download_name = f"{Path(uploaded_file.name).stem}_anki.csv"
+    download_name = safe_download_name(uploaded_file.name)
 
     action_left, action_right = st.columns([1, 2])
     with action_left:
@@ -341,15 +375,8 @@ def main() -> None:
 
     with st.expander("預覽單字卡"):
         for row in selected_df.head(10).to_dict(orient="records"):
-            phonetic = f" /{row['音標']}/" if row.get("音標") else ""
             st.markdown(
-                f"""
-                <div class="word-card">
-                  <strong>{row['英文單字']}</strong>{phonetic}
-                  <div class="word-meta">{row['詞性']} · {row['中文意思']}</div>
-                  <div class="word-example">{row['PDF 例句']}</div>
-                </div>
-                """,
+                build_word_card_html(row),
                 unsafe_allow_html=True,
             )
         if len(selected_df) > 10:

@@ -1,0 +1,55 @@
+name: Feature Request
+description: 建議新的學習功能或使用體驗改善
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝你的建議。請先描述學習情境與問題，再提出功能方案。
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 提交前確認
+      options:
+        - label: 我已搜尋現有 Issues，沒有找到相同建議。
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解決的問題
+      description: 目前哪個學習流程不方便？誰會受益？
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: 建議方案
+      description: 請描述理想的操作方式與預期結果。
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 替代方案
+      description: 你是否嘗試過其他方法或工具？
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 功能範圍
+      options:
+        - PDF 讀取
+        - 單字挑選與詞典
+        - Anki 匯出
+        - 使用者介面
+        - 部署與效能
+        - 文件與開發流程
+        - 其他
+    validations:
+      required: true

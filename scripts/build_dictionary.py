@@ -23,7 +23,7 @@ def normalize_pos(pos: str | None, translation: str) -> str:
     if value:
         return value
     matches = re.findall(
-        r"(?:^|\\n)(n|v|vt|vi|adj|adv|prep|conj|pron|num|art|int|aux)\.",
+        r"(?:^|\\n|\n)(n|v|vt|vi|a|ad|adj|r|adv|prep|conj|pron|num|art|int|aux)\.",
         translation.lower(),
     )
     return "/".join(dict.fromkeys(matches))
@@ -51,31 +51,8 @@ def build_database(source: Path, output: Path) -> tuple[int, int]:
     if not source.is_file():
         raise FileNotFoundError(f"Dictionary source does not exist: {source}")
     output.parent.mkdir(parents=True, exist_ok=True)
-    if output.exists():
-        output.unlink()
-
-    connection = sqlite3.connect(output)
-    connection.execute("PRAGMA journal_mode = WAL")
-    connection.execute("PRAGMA synchronous = NORMAL")
-    connection.executescript(
-        """
-        CREATE TABLE entries (
-            word TEXT PRIMARY KEY,
-            phonetic TEXT NOT NULL DEFAULT '',
-            translation TEXT NOT NULL,
-            pos TEXT NOT NULL DEFAULT '',
-            frq_rank INTEGER NOT NULL DEFAULT 0,
-            bnc_rank INTEGER NOT NULL DEFAULT 0,
-            oxford INTEGER NOT NULL DEFAULT 0,
-            tags TEXT NOT NULL DEFAULT ''
-        );
-        CREATE TABLE forms (
-            form TEXT PRIMARY KEY,
-            lemma TEXT NOT NULL REFERENCES entries(word)
-        );
-        CREATE INDEX idx_forms_lemma ON forms(lemma);
-        """
-    )
+    temporary_output = output.with_name(f"{output.name}.tmp")
+    temporary_output.unlink(missing_ok=True)
 
     entry_rows: list[tuple] = []
     exchange_by_word: dict[str, str] = {}
@@ -100,16 +77,6 @@ def build_database(source: Path, output: Path) -> tuple[int, int]:
             )
             exchange_by_word[word] = (row.get("exchange") or "").strip()
 
-    connection.executemany(
-        """
-        INSERT OR REPLACE INTO entries
-        (word, phonetic, translation, pos, frq_rank, bnc_rank, oxford, tags)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        """,
-        entry_rows,
-    )
-
-    selected_words = {row[0] for row in entry_rows}
     form_rows: dict[str, str] = {}
     for lemma, exchange in exchange_by_word.items():
         for segment in exchange.split("/"):
@@ -121,14 +88,54 @@ def build_database(source: Path, output: Path) -> tuple[int, int]:
                 if WORD_RE.fullmatch(form) and form != lemma:
                     form_rows.setdefault(form, lemma)
 
-    connection.executemany(
-        "INSERT OR IGNORE INTO forms (form, lemma) VALUES (?, ?)",
-        form_rows.items(),
-    )
-    connection.commit()
-    connection.execute("PRAGMA journal_mode = DELETE")
-    connection.execute("PRAGMA optimize")
-    connection.close()
+    connection = sqlite3.connect(temporary_output)
+    try:
+        connection.execute("PRAGMA foreign_keys = ON")
+        connection.execute("PRAGMA journal_mode = DELETE")
+        connection.execute("PRAGMA synchronous = NORMAL")
+        connection.executescript(
+            """
+            CREATE TABLE entries (
+                word TEXT PRIMARY KEY,
+                phonetic TEXT NOT NULL DEFAULT '',
+                translation TEXT NOT NULL,
+                pos TEXT NOT NULL DEFAULT '',
+                frq_rank INTEGER NOT NULL DEFAULT 0,
+                bnc_rank INTEGER NOT NULL DEFAULT 0,
+                oxford INTEGER NOT NULL DEFAULT 0,
+                tags TEXT NOT NULL DEFAULT ''
+            );
+            CREATE TABLE forms (
+                form TEXT PRIMARY KEY,
+                lemma TEXT NOT NULL REFERENCES entries(word)
+            );
+            CREATE INDEX idx_forms_lemma ON forms(lemma);
+            """
+        )
+        connection.executemany(
+            """
+            INSERT OR REPLACE INTO entries
+            (word, phonetic, translation, pos, frq_rank, bnc_rank, oxford, tags)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            entry_rows,
+        )
+        connection.executemany(
+            "INSERT OR IGNORE INTO forms (form, lemma) VALUES (?, ?)",
+            form_rows.items(),
+        )
+        connection.commit()
+        integrity = connection.execute("PRAGMA integrity_check").fetchone()[0]
+        if integrity != "ok":
+            raise sqlite3.DatabaseError(f"Dictionary integrity check failed: {integrity}")
+        connection.execute("PRAGMA optimize")
+    except Exception:
+        connection.close()
+        temporary_output.unlink(missing_ok=True)
+        raise
+    else:
+        connection.close()
+        temporary_output.replace(output)
     return len(entry_rows), len(form_rows)
 
 

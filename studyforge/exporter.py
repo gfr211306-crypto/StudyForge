@@ -35,9 +35,14 @@ def build_anki_csv(rows: Iterable[dict[str, Any]]) -> bytes:
         example = _safe_text(row.get("PDF 例句"))
         pages = _safe_text(row.get("頁碼"))
 
-        front = html.escape(word)
+        # Wrapping fields in HTML prevents spreadsheet software from treating
+        # user-edited values beginning with =, +, -, or @ as formulas.
+        front_content = html.escape(word)
         if phonetic:
-            front += f"<br><small>/{html.escape(phonetic.strip('/'))}/</small>"
+            front_content += (
+                f"<br><small>/{html.escape(phonetic.strip('/'))}/</small>"
+            )
+        front = f"<span>{front_content}</span>"
 
         back_parts = []
         if pos:
@@ -50,7 +55,8 @@ def build_anki_csv(rows: Iterable[dict[str, Any]]) -> bytes:
             )
         if pages and pages != "—":
             back_parts.append(f"<br><small>PDF 第 {html.escape(pages)} 頁</small>")
-        back = "　".join(back_parts[:2]) + "".join(back_parts[2:])
+        back_content = "　".join(back_parts[:2]) + "".join(back_parts[2:])
+        back = f"<span>{back_content}</span>"
         tags = f"StudyForge PDF_vocab {_tagify(word)}"
         writer.writerow([front, back, tags])
 
