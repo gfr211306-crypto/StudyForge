@@ -1,87 +1,78 @@
-# Tester recruitment posts
+# Short tester recruitment posts
 
-以下文案可以依社群規則調整後發布。請不要宣稱有尚未發生的下載量、
-使用者數、Stars、Issues 或測試結果。
+以下文案以「找 3 位真人、約 5 分鐘」為主。沒有 Star、Follow、下載或分享要求，
+也沒有虛構使用者、Issues 或回饋。
+
+## Before posting
+
+1. 用無痕／登出狀態開啟 Demo。
+2. 確認不需要 Streamlit 帳號即可看到 StudyForge 上傳介面。
+3. 確認 Tester Guide 與 Feedback form 都能開啟。
+4. 若 Demo 導向 Streamlit 登入頁，先修正 app access 設定，不要發布招募文。
 
 ## Reddit
 
 ### Title
 
-I built an open-source PDF → vocabulary → Anki tool and am looking for first testers
+Looking for 3 people to spend 5 minutes testing an open-source PDF vocabulary tool
 
-### Body
+### Post
 
-Hi everyone — I’m looking for a few real users to try **StudyForge**, an open-source
-tool for turning an English PDF into vocabulary study data.
+I’m looking for **3 real testers** for StudyForge, an open-source tool that turns
+an English PDF into IELTS vocabulary with CEFR labels and Anki/CSV/JSON export.
 
-The workflow is:
+The test is about 5 minutes:
 
-1. Upload an English PDF
-2. Review recommended vocabulary
-3. Try IELTS mode and check CEFR labels
-4. Export Anki CSV, ordinary CSV, and JSON
-5. Report what worked or did not work
+**PDF → IELTS/CEFR → Export → Feedback**
 
-The public demo is here:
-
+Demo:
 <https://studyforge-kpamprbzckvvgx4sz6fxvz.streamlit.app/>
 
-Tester guide:
-
+Guide:
 <https://github.com/gfr211306-crypto/StudyForge/blob/main/docs/TESTER_GUIDE.md>
 
-The test takes about 10–15 minutes. Please use only a non-sensitive PDF that you
-are allowed to upload. Do not post private documents in the feedback issue.
+Please use a non-sensitive PDF. No Star or Follow is requested—honest feedback is
+the only goal.
 
-This is an early open-source project, so I’m especially interested in:
-
-- PDFs that fail to parse
-- vocabulary that feels irrelevant
-- IELTS or CEFR results that look confusing
-- Anki, CSV, or JSON export problems
-- browser or mobile usability issues
-
-Feedback form:
-
+Feedback:
 <https://github.com/gfr211306-crypto/StudyForge/issues/new?template=external_feedback.yml>
 
 ## Discord
 
-### Short version
+🧪 **Looking for 3 StudyForge testers — about 5 minutes**
 
-🧪 **Looking for StudyForge testers**
+Try this flow with a non-sensitive English PDF:
 
-StudyForge turns an English PDF into vocabulary cards with IELTS mode, CEFR labels,
-PDF examples, and Anki/CSV/JSON export.
+**PDF → IELTS/CEFR → Export → Feedback**
 
-Try the public demo:
-<https://studyforge-kpamprbzckvvgx4sz6fxvz.streamlit.app/>
+Demo: <https://studyforge-kpamprbzckvvgx4sz6fxvz.streamlit.app/>
 
-Tester Guide:
-<https://github.com/gfr211306-crypto/StudyForge/blob/main/docs/TESTER_GUIDE.md>
+Guide: <https://github.com/gfr211306-crypto/StudyForge/blob/main/docs/TESTER_GUIDE.md>
 
-It takes about 10–15 minutes. Please use a non-sensitive PDF and report feedback here:
-<https://github.com/gfr211306-crypto/StudyForge/issues/new?template=external_feedback.yml>
+Feedback: <https://github.com/gfr211306-crypto/StudyForge/issues/new?template=external_feedback.yml>
+
+No Star or Follow needed. I only want real usability feedback.
 
 ## GitHub Community / Discussions
 
 ### Title
 
-Looking for first external testers for StudyForge v0.2.0
+Looking for 3 real users to test StudyForge for 5 minutes
 
-### Body
+### Post
 
-StudyForge v0.2.0 is an open-source toolkit with a Streamlit Web App, CLI, and
-Python API. I’m looking for real users to test the end-to-end learning workflow:
+StudyForge v0.2.0 is an open-source PDF vocabulary toolkit. I’m looking for
+**3 real people** to complete one short workflow:
 
-- PDF upload and text extraction
-- IELTS vocabulary mode
-- CEFR A1–C2 labels and honest `unknown` results
-- Anki CSV, ordinary CSV, and JSON exports
+**PDF upload → IELTS/CEFR review → Anki/CSV/JSON export → feedback**
 
-Please follow the [Tester Guide](TESTER_GUIDE.md) and submit feedback through the
-[External User Feedback form](https://github.com/gfr211306-crypto/StudyForge/issues/new?template=external_feedback.yml).
+Public Demo:
+<https://studyforge-kpamprbzckvvgx4sz6fxvz.streamlit.app/>
 
-No private PDFs are needed. Testers may request an anonymous ID such as
-`Tester-001`, but IDs will only be created after a real person completes the test
-and provides feedback.
+5-minute Guide:
+<https://github.com/gfr211306-crypto/StudyForge/blob/main/docs/TESTER_GUIDE.md>
+
+Feedback form:
+<https://github.com/gfr211306-crypto/StudyForge/issues/new?template=external_feedback.yml>
+
+Please use a non-sensitive PDF. No Star, PR, or promotion is requested.

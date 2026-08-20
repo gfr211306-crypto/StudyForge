@@ -6,7 +6,7 @@
 
 ### Added
 
-- External tester onboarding guide and outreach templates
+- Five-minute recruitment workflow for the first three real external testers
 - External User Feedback GitHub Issue form
 - Separate Human testers and Automated tests tracking policy
 

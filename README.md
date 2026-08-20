@@ -39,9 +39,9 @@ print(result.items)
 
 ## Looking for testers
 
-StudyForge 正在尋找第一批真實外部測試者，協助確認不同教材、學習程度與使用
-環境下的體驗。測試約需 10–15 分鐘，請使用不含個資、機密內容或未獲授權內容
-的英文 PDF。
+StudyForge 正在尋找 **3 位真實外部測試者**，每人花約 **5 分鐘**完成一次
+最短流程：PDF → IELTS／CEFR → Export → Feedback。請使用不含個資、機密內容
+或未獲授權內容的英文 PDF；不需要 Star、Follow 或公開分享。
 
 - [閱讀 Tester Guide](docs/TESTER_GUIDE.md)
 - [提交 External User Feedback](https://github.com/gfr211306-crypto/StudyForge/issues/new?template=external_feedback.yml)
@@ -50,10 +50,10 @@ StudyForge 正在尋找第一批真實外部測試者，協助確認不同教材
 ### Testing status
 
 - **Human testers:** 0 confirmed; no anonymous tester ID has been assigned.
-- **Automated validation:** 100-case E2E matrix and 31 pytest tests.
+- **Automated validation:** 100-case E2E matrix and 32 pytest tests.
 
 人類測試者與自動化測試會分開統計。只有實際完成 Tester Guide 並提供回饋後，
-才會建立 `Tester-001`、`Tester-002` 等匿名編號。
+才會依序建立 `Tester-001`、`Tester-002`、`Tester-003` 等匿名編號。
 
 ## Feedback
 
