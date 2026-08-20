@@ -14,15 +14,13 @@ StudyForge 是一個開源的學生學習工具，可將英文 PDF 自動整理�
 
 ## Live Demo
 
-公開部署所需檔案已準備完成，但 **Streamlit Community Cloud 尚待專案擁有者
-完成第一次帳號授權與部署**。
+### 🚀 [立即開啟 StudyForge 公開版](https://studyforge-kpamprbzckvvgx4sz6fxvz.streamlit.app/)
 
+- 公開網址：<https://studyforge-kpamprbzckvvgx4sz6fxvz.streamlit.app/>
 - 本機示範：執行 `streamlit run app.py` 後開啟 `http://localhost:8501`
 - 示範教材：`samples/StudyForge_demo.pdf`
 - Community Cloud 入口檔：`app.py`
 - 建議部署 Python：`3.12`
-
-部署完成後，請將此段替換為實際的 `https://<your-app>.streamlit.app` 網址。
 
 ## Features
 
