@@ -145,7 +145,7 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("data/studyforge_dictionary.db"),
+        default=Path("studyforge/data/studyforge_dictionary.db"),
         help="Output SQLite database path",
     )
     args = parser.parse_args()

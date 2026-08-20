@@ -6,6 +6,12 @@
 
 ### Added
 
+- Reusable `StudyForge` Python API shared by Web and CLI
+- `studyforge extract` CLI with Anki CSV, ordinary CSV, and JSON output
+- IELTS vocabulary mode using explicit dictionary IELTS tags
+- CEFR A1-C2 labels from CEFR-J and Octanove vocabulary profiles
+- Explicit `unknown` CEFR result for absent or ambiguous headwords
+- `pyproject.toml`, console-script metadata, package data, wheel and sdist build
 - GitHub Actions CI，測試 Python 3.11 與 3.12
 - Bug Report、Feature Request、PR templates
 - Dependabot、CONTRIBUTING、SECURITY 與 Code of Conduct
@@ -16,6 +22,9 @@
 
 ### Changed
 
+- Streamlit Web App now consumes the same public core API as the CLI
+- Offline dictionary and CEFR mapping are bundled as Python package data
+- Anki cards now include CEFR and IELTS tags
 - 將執行依賴與開發依賴分離
 - 將 PDF 分析結果改為每個 Streamlit session 獨立保存
 - 公開錯誤畫面不再顯示伺服器 stack trace

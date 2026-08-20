@@ -45,6 +45,8 @@ class VocabularyItem:
     count: int
     pages: tuple[int, ...]
     score: float
+    cefr_level: str = "unknown"
+    is_ielts: bool = False
 
     @property
     def page_label(self) -> str:
@@ -52,3 +54,12 @@ class VocabularyItem:
             return "—"
         shown = ", ".join(str(page) for page in self.pages[:4])
         return f"{shown}…" if len(self.pages) > 4 else shown
+
+
+@dataclass(frozen=True)
+class AnalysisResult:
+    """A reusable result returned by the public StudyForge API."""
+
+    document: PdfDocument
+    items: tuple[VocabularyItem, ...]
+    mode: str

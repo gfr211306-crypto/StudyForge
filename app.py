@@ -9,21 +9,27 @@ from pathlib import Path
 import pandas as pd
 import streamlit as st
 
-from studyforge.dictionary import DictionaryStore
-from studyforge.exporter import build_anki_csv
+from studyforge import StudyForge
+from studyforge.exporter import (
+    EXPORT_MIME_TYPES,
+    export_rows,
+    output_suffix,
+)
 from studyforge.pdf_reader import (
     MAX_PDF_BYTES,
     MAX_PDF_PAGES,
     PdfReadError,
-    extract_pdf_text,
 )
 from studyforge.presentation import build_word_card_html
-from studyforge.vocabulary import LEVEL_LABELS, analyze_vocabulary
+from studyforge.vocabulary import LEVEL_LABELS
 
 
-APP_ROOT = Path(__file__).resolve().parent
-DICTIONARY_PATH = APP_ROOT / "data" / "studyforge_dictionary.db"
 LOGGER = logging.getLogger("studyforge")
+EXPORT_LABELS = {
+    "anki": "Anki CSV",
+    "csv": "普通 CSV",
+    "json": "JSON",
+}
 
 
 def apply_theme() -> None:
@@ -139,8 +145,8 @@ def apply_theme() -> None:
 
 
 @st.cache_resource(show_spinner=False)
-def get_dictionary(path: str) -> DictionaryStore:
-    return DictionaryStore(Path(path))
+def get_engine() -> StudyForge:
+    return StudyForge()
 
 
 def process_pdf(
@@ -148,31 +154,30 @@ def process_pdf(
     max_words: int,
     level: str,
     min_occurrences: int,
-    dictionary_path: str,
 ):
-    document = extract_pdf_text(file_bytes)
-    dictionary = get_dictionary(dictionary_path)
-    words = analyze_vocabulary(
-        document,
-        dictionary,
+    result = get_engine().analyze_bytes(
+        file_bytes,
         limit=max_words,
-        level=level,
+        mode=level,
         min_occurrences=min_occurrences,
     )
-    return document, words
+    return result.document, list(result.items)
 
 
-def safe_download_name(original_name: str) -> str:
+def safe_download_name(original_name: str, export_format: str = "anki") -> str:
     stem = Path(original_name).stem[:80]
     safe_stem = re.sub(r"[^\w.-]+", "_", stem, flags=re.UNICODE).strip("._")
-    return f"{safe_stem or 'studyforge'}_anki.csv"
+    return (
+        f"{safe_stem or 'studyforge'}_{export_format}"
+        f"{output_suffix(export_format)}"
+    )
 
 
 def result_dataframe(words) -> pd.DataFrame:
     return pd.DataFrame(
         [
             {
-                "加入 Anki": True,
+                "匯出": True,
                 "英文單字": item.word,
                 "音標": item.phonetic,
                 "詞性": item.part_of_speech,
@@ -180,6 +185,8 @@ def result_dataframe(words) -> pd.DataFrame:
                 "PDF 例句": item.example,
                 "出現次數": item.count,
                 "頁碼": item.page_label,
+                "CEFR": item.cefr_level,
+                "IELTS": item.is_ielts,
             }
             for item in words
         ]
@@ -246,16 +253,26 @@ def main() -> None:
             value=1,
             help="短篇 PDF 建議設為 1；長篇教材可提高到 2 或 3。",
         )
+        export_label = st.selectbox(
+            "匯出格式",
+            options=list(EXPORT_LABELS.values()),
+            index=0,
+        )
+        export_format = next(
+            key for key, value in EXPORT_LABELS.items() if value == export_label
+        )
         st.divider()
         st.caption(
             "🔒 PDF 只會傳送到目前執行 StudyForge 的伺服器處理，"
             "不會送往翻譯或 AI API。若使用公開部署，請勿上傳機密文件。"
         )
-        dictionary = get_dictionary(str(DICTIONARY_PATH))
+        engine = get_engine()
+        dictionary = engine.dictionary
         if dictionary.using_fallback:
             st.warning("目前使用精簡內建詞典。重新執行安裝腳本可建立完整版離線詞典。")
         else:
             st.success(f"離線詞典已就緒：{dictionary.entry_count:,} 個詞條")
+        st.caption(f"CEFR 無歧義詞條：{engine.cefr_profile.known_word_count:,}")
 
     st.subheader("上傳教材")
     uploaded_file = st.file_uploader(
@@ -299,7 +316,6 @@ def main() -> None:
                     max_words,
                     level,
                     min_occurrences,
-                    str(DICTIONARY_PATH),
                 )
             st.session_state["analysis_key"] = analysis_key
             st.session_state["analysis_result"] = result
@@ -339,7 +355,7 @@ def main() -> None:
         use_container_width=True,
         height=min(650, 90 + len(words) * 35),
         column_config={
-            "加入 Anki": st.column_config.CheckboxColumn(width="small"),
+            "匯出": st.column_config.CheckboxColumn(width="small"),
             "英文單字": st.column_config.TextColumn(required=True, width="medium"),
             "音標": st.column_config.TextColumn(width="small"),
             "詞性": st.column_config.TextColumn(width="small"),
@@ -347,31 +363,43 @@ def main() -> None:
             "PDF 例句": st.column_config.TextColumn(width="large"),
             "出現次數": st.column_config.NumberColumn(disabled=True, width="small"),
             "頁碼": st.column_config.TextColumn(disabled=True, width="small"),
+            "CEFR": st.column_config.TextColumn(disabled=True, width="small"),
+            "IELTS": st.column_config.CheckboxColumn(disabled=True, width="small"),
         },
-        disabled=["出現次數", "頁碼"],
+        disabled=["出現次數", "頁碼", "CEFR", "IELTS"],
         key=f"vocabulary_editor_{file_hash}_{level}_{max_words}_{min_occurrences}",
     )
 
-    selected_df = edited_df[edited_df["加入 Anki"] == True].copy()  # noqa: E712
-    csv_data = build_anki_csv(selected_df.to_dict(orient="records"))
-    download_name = safe_download_name(uploaded_file.name)
+    selected_df = edited_df[edited_df["匯出"] == True].copy()  # noqa: E712
+    export_data = export_rows(
+        selected_df.to_dict(orient="records"),
+        export_format,
+    )
+    download_name = safe_download_name(uploaded_file.name, export_format)
 
     action_left, action_right = st.columns([1, 2])
     with action_left:
         st.download_button(
-            "⬇️ 下載 Anki CSV",
-            data=csv_data,
+            f"⬇️ 下載 {EXPORT_LABELS[export_format]}",
+            data=export_data,
             file_name=download_name,
-            mime="text/csv",
+            mime=EXPORT_MIME_TYPES[export_format],
             use_container_width=True,
             disabled=selected_df.empty,
         )
     with action_right:
-        st.info(
-            f"目前會匯出 **{len(selected_df)}** 張卡片。"
-            "匯入 Anki 時，欄位依序選擇 Front、Back、Tags，並勾選允許 HTML。",
-            icon="💡",
-        )
+        if export_format == "anki":
+            st.info(
+                f"目前會匯出 **{len(selected_df)}** 張卡片。"
+                "匯入 Anki 時，欄位依序選擇 Front、Back、Tags，並勾選允許 HTML。",
+                icon="💡",
+            )
+        else:
+            st.info(
+                f"目前會匯出 **{len(selected_df)}** 個單字，"
+                f"格式為 **{EXPORT_LABELS[export_format]}**。",
+                icon="💡",
+            )
 
     with st.expander("預覽單字卡"):
         for row in selected_df.head(10).to_dict(orient="records"):

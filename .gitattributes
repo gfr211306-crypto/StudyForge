@@ -12,6 +12,8 @@ requirements*.txt text eol=lf
 *.yaml text eol=lf
 *.toml text eol=lf
 *.md text eol=lf
+*.json text eol=lf
+py.typed text eol=lf
 
 # Generated assets must never be modified by line-ending conversion.
 *.db binary

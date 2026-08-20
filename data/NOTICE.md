@@ -1,6 +1,6 @@
 # 詞典資料說明
 
-`studyforge_dictionary.db` 是由 [ECDICT](https://github.com/skywind3000/ECDICT)
+`studyforge/data/studyforge_dictionary.db` 是由 [ECDICT](https://github.com/skywind3000/ECDICT)
 的 `stardict.csv` 篩選並轉換而成，保留適合一般學習用途的英文詞條、中文釋義、
 詞性、音標、字頻與詞形變化。
 

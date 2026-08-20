@@ -45,6 +45,7 @@ python -m pip check
 python scripts/audit_repository.py
 python -m pytest -q
 python -m compileall -q app.py studyforge scripts tests
+python -m build
 ```
 
 4. 執行 `streamlit run app.py`，手動檢查受影響的操作流程。

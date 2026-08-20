@@ -17,6 +17,11 @@ def test_github_workflow_and_dependabot_yaml_parse():
 
     assert workflow["name"] == "CI"
     assert "test" in workflow["jobs"]
+    step_names = [
+        step["name"] for step in workflow["jobs"]["test"]["steps"] if "name" in step
+    ]
+    assert "Build package distributions" in step_names
+    assert "Smoke-test installed CLI" in step_names
     assert dependabot["version"] == 2
     assert len(dependabot["updates"]) == 2
 

@@ -51,3 +51,9 @@ jobs:
 
       - name: Compile Python sources
         run: python -m compileall -q app.py studyforge scripts tests
+
+      - name: Build package distributions
+        run: python -m build
+
+      - name: Smoke-test installed CLI
+        run: studyforge --help

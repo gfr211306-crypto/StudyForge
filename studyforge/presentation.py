@@ -18,12 +18,16 @@ def build_word_card_html(row: Mapping[str, Any]) -> str:
     part_of_speech = _safe_text(row.get("詞性"))
     translation = _safe_text(row.get("中文意思"))
     example = _safe_text(row.get("PDF 例句")).replace("\n", "<br>")
+    cefr = _safe_text(row.get("CEFR", "unknown"))
+    is_ielts = row.get("IELTS") is True
     phonetic_html = f" /{phonetic.strip('/')}/" if phonetic else ""
+    badges = f"CEFR {cefr}" + (" · IELTS" if is_ielts else "")
 
     return (
         '<div class="word-card">'
         f"<strong>{word}</strong>{phonetic_html}"
         f'<div class="word-meta">{part_of_speech} · {translation}</div>'
         f'<div class="word-example">{example}</div>'
+        f'<div class="word-meta">{badges}</div>'
         "</div>"
     )

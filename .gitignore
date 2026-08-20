@@ -44,6 +44,9 @@ data/stardict.csv
 data/*.db-shm
 data/*.db-wal
 data/*.db-journal
+studyforge/data/*.db-shm
+studyforge/data/*.db-wal
+studyforge/data/*.db-journal
 *.sqlite-shm
 *.sqlite-wal
 *.sqlite-journal

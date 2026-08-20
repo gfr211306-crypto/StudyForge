@@ -7,6 +7,7 @@ from collections import Counter, defaultdict
 
 from opencc import OpenCC
 
+from studyforge.cefr import CEFRProfile, default_cefr_profile
 from studyforge.dictionary import DictionaryStore
 from studyforge.models import PdfDocument, VocabularyItem
 
@@ -16,6 +17,7 @@ LEVEL_LABELS = {
     "basic": "基礎常用",
     "intermediate": "中高階",
     "advanced": "進階挑戰",
+    "ielts": "IELTS 單字",
 }
 
 TOKEN_RE = re.compile(r"[A-Za-z]+(?:['’-][A-Za-z]+)?")
@@ -73,6 +75,10 @@ def normalize_token(token: str) -> str:
     if token.endswith("'s") and len(token) > 4:
         token = token[:-2]
     return token
+
+
+def _has_ielts_tag(tags: str) -> bool:
+    return bool(re.search(r"(?:^|[^a-z])ielts(?:[^a-z]|$)", tags.lower()))
 
 
 def _format_pos(raw_pos: str, translation: str) -> str:
@@ -164,8 +170,10 @@ def analyze_vocabulary(
     limit: int = 30,
     level: str = "balanced",
     min_occurrences: int = 1,
+    cefr_profile: CEFRProfile | None = None,
 ) -> list[VocabularyItem]:
     """Rank useful words and enrich them with dictionary and PDF context."""
+    profile = cefr_profile or default_cefr_profile()
     page_tokens: list[list[str]] = []
     original_case: dict[str, Counter[str]] = defaultdict(Counter)
     all_forms: list[str] = []
@@ -176,7 +184,7 @@ def analyze_vocabulary(
             normalized = normalize_token(original)
             if len(normalized) < 3 or normalized in STOPWORDS:
                 continue
-            if not re.fullmatch(r"[a-z]+(?:'[a-z]+)?", normalized):
+            if not re.fullmatch(r"[a-z]+(?:['-][a-z]+)*", normalized):
                 continue
             forms.append(normalized)
             all_forms.append(normalized)
@@ -229,6 +237,8 @@ def analyze_vocabulary(
             for tag in ("toefl", "ielts", "gre", "cet6", "ky", "academic")
         ) else 0.0
         oxford_bonus = 0.35 if entry.oxford else 0.0
+        is_ielts = _has_ielts_tag(entry.tags)
+        ielts_bonus = 2.5 if level == "ielts" and is_ielts else 0.0
         score = (
             math.log1p(count) * 3.2
             + page_coverage * 2.4
@@ -236,6 +246,7 @@ def analyze_vocabulary(
             + min(len(lemma), 12) / 12
             + academic_bonus
             + oxford_bonus
+            + ielts_bonus
         )
 
         candidates.append(
@@ -248,8 +259,20 @@ def analyze_vocabulary(
                 count=count,
                 pages=tuple(sorted(lemma_pages[lemma])),
                 score=score,
+                cefr_level=profile.level_for(entry.word),
+                is_ielts=is_ielts,
             )
         )
 
-    candidates.sort(key=lambda item: (-item.score, -item.count, item.word))
+    if level == "ielts":
+        candidates.sort(
+            key=lambda item: (
+                not item.is_ielts,
+                -item.score,
+                -item.count,
+                item.word,
+            )
+        )
+    else:
+        candidates.sort(key=lambda item: (-item.score, -item.count, item.word))
     return candidates[: max(1, limit)]

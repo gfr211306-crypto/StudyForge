@@ -15,6 +15,8 @@ SKIPPED_DIRECTORIES = {
     "__pycache__",
     ".mypy_cache",
     ".ruff_cache",
+    "build",
+    "dist",
 }
 FORBIDDEN_PARTS = {
     ".venv",
@@ -63,7 +65,10 @@ def tracked_files() -> list[Path]:
             path
             for path in PROJECT_ROOT.rglob("*")
             if path.is_file()
-            and not any(part in SKIPPED_DIRECTORIES for part in path.parts)
+            and not any(
+                part in SKIPPED_DIRECTORIES or part.endswith(".egg-info")
+                for part in path.parts
+            )
         ]
     return [
         PROJECT_ROOT / item.decode("utf-8")

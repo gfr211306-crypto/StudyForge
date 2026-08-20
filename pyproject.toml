@@ -1,0 +1,69 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "studyforge-vocab"
+version = "0.2.0"
+description = "Extract reusable English vocabulary study data from PDF files."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = [
+    "LICENSE",
+    "data/LICENSE_ECDICT.txt",
+    "data/NOTICE.md",
+    "data/NOTICE_CEFR.md",
+]
+authors = [{ name = "StudyForge contributors" }]
+keywords = ["pdf", "vocabulary", "anki", "ielts", "cefr", "streamlit"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: Education",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = [
+    "PyMuPDF>=1.25,<2.0",
+    "opencc-python-reimplemented>=0.1.7,<0.2",
+]
+
+[project.optional-dependencies]
+web = [
+    "streamlit>=1.61,<2.0",
+    "pandas>=2.3,<3.0",
+]
+dev = [
+    "pytest>=9,<10",
+    "PyYAML>=6,<7",
+    "build>=1.5,<2",
+]
+
+[project.scripts]
+studyforge = "studyforge.cli:main"
+
+[project.urls]
+Homepage = "https://studyforge-kpamprbzckvvgx4sz6fxvz.streamlit.app/"
+Repository = "https://github.com/gfr211306-crypto/StudyForge"
+Issues = "https://github.com/gfr211306-crypto/StudyForge/issues"
+Changelog = "https://github.com/gfr211306-crypto/StudyForge/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["studyforge*"]
+exclude = ["tests*"]
+
+[tool.setuptools.package-data]
+studyforge = [
+    "py.typed",
+    "data/*.db",
+    "data/*.json",
+]
