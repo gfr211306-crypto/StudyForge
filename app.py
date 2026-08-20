@@ -286,12 +286,12 @@ def main() -> None:
         st.link_button(
             "🐛 Report a bug",
             BUG_REPORT_URL,
-            use_container_width=True,
+            width="stretch",
         )
         st.link_button(
             "💡 Request a feature",
             FEATURE_REQUEST_URL,
-            use_container_width=True,
+            width="stretch",
         )
 
     st.subheader("上傳教材")
@@ -372,7 +372,7 @@ def main() -> None:
     edited_df = st.data_editor(
         result_dataframe(words),
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
         height=min(650, 90 + len(words) * 35),
         column_config={
             "匯出": st.column_config.CheckboxColumn(width="small"),
@@ -404,7 +404,7 @@ def main() -> None:
             data=export_data,
             file_name=download_name,
             mime=EXPORT_MIME_TYPES[export_format],
-            use_container_width=True,
+            width="stretch",
             disabled=selected_df.empty,
         )
     with action_right:

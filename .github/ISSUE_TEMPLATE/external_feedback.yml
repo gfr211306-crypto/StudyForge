@@ -1,0 +1,96 @@
+name: External User Feedback
+description: 回報你實際使用 StudyForge 後的 Bug、UX 或學習體驗
+title: "[External Feedback]: "
+labels:
+  - external-user-feedback
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝你實際測試 StudyForge。請不要上傳含個資、機密內容或未獲授權的 PDF。
+        維護者只有在確認你真的完成測試後，才會建立匿名 Tester ID。
+
+  - type: checkboxes
+    id: tester-confirmation
+    attributes:
+      label: 測試確認
+      options:
+        - label: 我實際上傳過一份 PDF 並操作過 StudyForge。
+          required: true
+        - label: 我已移除截圖、日誌與描述中的個資或機密內容。
+          required: true
+
+  - type: dropdown
+    id: feedback-type
+    attributes:
+      label: 回饋類型
+      options:
+        - Bug
+        - UX / usability
+        - IELTS mode
+        - CEFR label
+        - Anki export
+        - CSV export
+        - JSON export
+        - Performance
+        - Positive feedback
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: tester-id
+    attributes:
+      label: Anonymous Tester ID
+      description: 若你已由維護者提供 ID，填入例如 Tester-001；第一次回報可留空。
+      placeholder: Tester-001
+
+  - type: textarea
+    id: workflow
+    attributes:
+      label: 完成的流程
+      description: 請勾選或描述你實際完成的操作。
+      placeholder: |
+        - PDF upload:
+        - IELTS mode:
+        - CEFR review:
+        - Anki export:
+        - CSV export:
+        - JSON export:
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: 測試環境
+      description: 請提供 OS、瀏覽器、公開 Demo 或本機、PDF 大小與頁數。
+      placeholder: Windows 11 / Chrome / Public Demo / 2 MB / 5 pages
+    validations:
+      required: true
+
+  - type: textarea
+    id: feedback
+    attributes:
+      label: 回饋內容
+      description: 請描述實際看到的結果，以及你原本期待的結果。
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 重現步驟
+      description: 若是問題，請提供最小且不含敏感資料的重現步驟。
+      placeholder: |
+        1. 開啟……
+        2. 上傳一份約……的文字型 PDF
+        3. 選擇 IELTS mode
+        4. 發生……
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 錯誤訊息或去識別化證據
+      description: 可貼錯誤代碼、文字訊息或已移除敏感資訊的截圖。
+      render: text

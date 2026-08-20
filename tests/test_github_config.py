@@ -76,3 +76,14 @@ def test_issue_forms_have_required_structure():
 
     chooser = load_yaml(template_dir / "config.yml")
     assert chooser["blank_issues_enabled"] is False
+
+
+def test_external_feedback_issue_form_is_ready_for_human_reports():
+    form = load_yaml(
+        PROJECT_ROOT / ".github" / "ISSUE_TEMPLATE" / "external_feedback.yml"
+    )
+    assert form["name"] == "External User Feedback"
+    assert "external-user-feedback" in form["labels"]
+    assert any(field.get("id") == "tester-id" for field in form["body"])
+    assert any(field.get("id") == "workflow" for field in form["body"])
+    assert any(field.get("id") == "feedback" for field in form["body"])

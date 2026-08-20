@@ -37,12 +37,31 @@ result = analyze_pdf("file.pdf", limit=30, mode="ielts")
 print(result.items)
 ```
 
+## Looking for testers
+
+StudyForge 正在尋找第一批真實外部測試者，協助確認不同教材、學習程度與使用
+環境下的體驗。測試約需 10–15 分鐘，請使用不含個資、機密內容或未獲授權內容
+的英文 PDF。
+
+- [閱讀 Tester Guide](docs/TESTER_GUIDE.md)
+- [提交 External User Feedback](https://github.com/gfr211306-crypto/StudyForge/issues/new?template=external_feedback.yml)
+- [查看招募文案](docs/TESTER_OUTREACH.md)
+
+### Testing status
+
+- **Human testers:** 0 confirmed; no anonymous tester ID has been assigned.
+- **Automated validation:** 100-case E2E matrix and 31 pytest tests.
+
+人類測試者與自動化測試會分開統計。只有實際完成 Tester Guide 並提供回饋後，
+才會建立 `Tester-001`、`Tester-002` 等匿名編號。
+
 ## Feedback
 
 遇到錯誤或有功能建議時，歡迎使用 GitHub Issues：
 
 - [🐛 Report a bug](https://github.com/gfr211306-crypto/StudyForge/issues/new?template=bug_report.yml)
 - [💡 Request a feature](https://github.com/gfr211306-crypto/StudyForge/issues/new?template=feature_request.yml)
+- [🧪 External user feedback](https://github.com/gfr211306-crypto/StudyForge/issues/new?template=external_feedback.yml)
 
 提交前請先搜尋是否已有相同 Issue，並避免公開上傳含個資、機密內容或未獲授權的
 PDF。
@@ -375,6 +394,8 @@ StudyForge/
 5. 建立內容聚焦的 Pull Request。
 
 參與者請遵守 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)。
+
+真實使用者測試請先閱讀 [docs/TESTER_GUIDE.md](docs/TESTER_GUIDE.md)。
 
 ## Roadmap
 

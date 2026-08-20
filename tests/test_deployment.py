@@ -12,6 +12,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
 def test_streamlit_deployment_files_are_valid():
     assert (PROJECT_ROOT / "app.py").is_file()
+    app_source = (PROJECT_ROOT / "app.py").read_text(encoding="utf-8")
+    assert "use_container_width" not in app_source
     requirements = (PROJECT_ROOT / "requirements.txt").read_text(encoding="utf-8")
     assert "streamlit==" in requirements
     assert "PyMuPDF==" in requirements

@@ -2,6 +2,14 @@
 
 本專案的重要變更會記錄於此。
 
+## [Unreleased]
+
+### Added
+
+- External tester onboarding guide and outreach templates
+- External User Feedback GitHub Issue form
+- Separate Human testers and Automated tests tracking policy
+
 ## [0.2.0] - 2026-08-20
 
 ### Added
