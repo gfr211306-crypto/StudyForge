@@ -37,6 +37,16 @@ result = analyze_pdf("file.pdf", limit=30, mode="ielts")
 print(result.items)
 ```
 
+## Feedback
+
+遇到錯誤或有功能建議時，歡迎使用 GitHub Issues：
+
+- [🐛 Report a bug](https://github.com/gfr211306-crypto/StudyForge/issues/new?template=bug_report.yml)
+- [💡 Request a feature](https://github.com/gfr211306-crypto/StudyForge/issues/new?template=feature_request.yml)
+
+提交前請先搜尋是否已有相同 Issue，並避免公開上傳含個資、機密內容或未獲授權的
+PDF。
+
 ## Live Demo
 
 ### 🚀 [立即開啟 StudyForge 公開版](https://studyforge-kpamprbzckvvgx4sz6fxvz.streamlit.app/)

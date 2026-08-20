@@ -25,6 +25,14 @@ from studyforge.vocabulary import LEVEL_LABELS
 
 
 LOGGER = logging.getLogger("studyforge")
+BUG_REPORT_URL = (
+    "https://github.com/gfr211306-crypto/StudyForge/issues/new"
+    "?template=bug_report.yml"
+)
+FEATURE_REQUEST_URL = (
+    "https://github.com/gfr211306-crypto/StudyForge/issues/new"
+    "?template=feature_request.yml"
+)
 EXPORT_LABELS = {
     "anki": "Anki CSV",
     "csv": "普通 CSV",
@@ -273,6 +281,18 @@ def main() -> None:
         else:
             st.success(f"離線詞典已就緒：{dictionary.entry_count:,} 個詞條")
         st.caption(f"CEFR 無歧義詞條：{engine.cefr_profile.known_word_count:,}")
+        st.divider()
+        st.caption("Feedback")
+        st.link_button(
+            "🐛 Report a bug",
+            BUG_REPORT_URL,
+            use_container_width=True,
+        )
+        st.link_button(
+            "💡 Request a feature",
+            FEATURE_REQUEST_URL,
+            use_container_width=True,
+        )
 
     st.subheader("上傳教材")
     uploaded_file = st.file_uploader(
