@@ -3,8 +3,16 @@ from __future__ import annotations
 import hashlib
 import logging
 import re
+import sys
 import uuid
 from pathlib import Path
+
+# Streamlit Community Cloud mounts this repository at /mount/src/studyforge.
+# Put the repository root before its parent so Python imports the inner
+# studyforge package instead of treating the outer checkout as a namespace.
+APP_ROOT = Path(__file__).resolve().parent
+if str(APP_ROOT) not in sys.path:
+    sys.path.insert(0, str(APP_ROOT))
 
 import pandas as pd
 import streamlit as st

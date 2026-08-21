@@ -19,20 +19,16 @@ exit /b 1
 
 :python_found
 
-echo [1/4] Creating the virtual environment...
+echo [1/3] Creating the virtual environment...
 %PYTHON% -m venv .venv
 if errorlevel 1 goto :error
 
-echo [2/4] Updating pip...
+echo [2/3] Updating pip...
 ".venv\Scripts\python.exe" -m pip install --upgrade pip
 if errorlevel 1 goto :error
 
-echo [3/4] Installing StudyForge website packages...
+echo [3/3] Installing the StudyForge website and CLI...
 ".venv\Scripts\python.exe" -m pip install -r requirements.txt
-if errorlevel 1 goto :error
-
-echo [4/4] Installing the StudyForge CLI...
-".venv\Scripts\python.exe" -m pip install --no-deps -e .
 if errorlevel 1 goto :error
 
 echo.

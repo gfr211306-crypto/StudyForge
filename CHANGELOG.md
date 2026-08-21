@@ -10,6 +10,11 @@
 - External User Feedback GitHub Issue form
 - Separate Human testers and Automated tests tracking policy
 
+### Fixed
+
+- Streamlit Cloud import failure when the checkout directory shadows the
+  bundled `studyforge` package
+
 ## [0.2.0] - 2026-08-20
 
 ### Added
