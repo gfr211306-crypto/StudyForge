@@ -15,6 +15,13 @@
 - Streamlit Cloud import failure when the checkout directory shadows the
   bundled `studyforge` package
 
+### Changed
+
+- Replaced non-reproducible fixed E2E and pytest counts in public documentation
+  with links to the tracked tests, public CI workflow, and reproducible commands
+- Kept tester documentation regression checks focused on workflow structure,
+  public links, privacy, and separation of human and automated testing
+
 ## [0.2.0] - 2026-08-20
 
 ### Added

@@ -49,11 +49,21 @@ StudyForge 正在尋找 **3 位真實外部測試者**，每人花約 **5 分鐘
 
 ### Testing status
 
-- **Human testers:** 0 confirmed; no anonymous tester ID has been assigned.
-- **Automated validation:** 100-case E2E matrix and 32 pytest tests.
+- **Human testing:** current real-user status is recorded in the
+  [Human feedback log](docs/HUMAN_FEEDBACK_LOG.md). Automated runs are never
+  counted as human testers.
+- **Automated validation:** the public
+  [CI workflow](.github/workflows/ci.yml) runs pytest on Python 3.11 and 3.12,
+  repository audit, compileall, package builds, and a CLI smoke test.
 
-人類測試者與自動化測試會分開統計。只有實際完成 Tester Guide 並提供回饋後，
-才會依序建立 `Tester-001`、`Tester-002`、`Tester-003` 等匿名編號。
+README 不固定寫入 pytest／E2E case 數或 coverage 百分比，避免數字在新增測試後
+失真。請查看 [`tests/`](tests/) 與最新 CI，或執行以下指令取得目前可重現的測試數：
+
+```bash
+python -m pytest --collect-only -q
+```
+
+只有實際完成 Tester Guide 並提供回饋後，才會建立匿名 Tester ID。
 
 ## Feedback
 

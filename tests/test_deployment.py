@@ -27,8 +27,8 @@ def test_streamlit_deployment_files_are_valid():
     pyproject = tomllib.loads(
         (PROJECT_ROOT / "pyproject.toml").read_text(encoding="utf-8")
     )
-    assert pyproject["project"]["version"] == "0.2.0"
-    assert pyproject["project"]["version"] == studyforge.__version__
+    project_version = pyproject["project"]["version"]
+    assert project_version == studyforge.__version__
     assert pyproject["project"]["scripts"]["studyforge"] == "studyforge.cli:main"
     package_data = pyproject["tool"]["setuptools"]["package-data"]["studyforge"]
     assert "data/*.db" in package_data
