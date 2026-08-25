@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
+from contextlib import closing
 from pathlib import Path
 from typing import Iterable
 
@@ -31,7 +32,7 @@ class DictionaryStore:
             return len(FALLBACK_ENTRIES)
         if self._entry_count is None:
             try:
-                with self._connect() as connection:
+                with closing(self._connect()) as connection:
                     self._entry_count = int(
                         connection.execute("SELECT COUNT(*) FROM entries").fetchone()[0]
                     )
@@ -60,7 +61,7 @@ class DictionaryStore:
     ) -> tuple[dict[str, str], dict[str, DictionaryEntry]]:
         resolved: dict[str, str] = {}
         entries: dict[str, DictionaryEntry] = {}
-        with self._connect() as connection:
+        with closing(self._connect()) as connection:
             for chunk_start in range(0, len(words), 800):
                 chunk = words[chunk_start : chunk_start + 800]
                 placeholders = ",".join("?" for _ in chunk)
