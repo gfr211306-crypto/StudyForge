@@ -274,6 +274,25 @@ export_vocabulary
 export_rows
 ```
 
+上面這份清單由 CI 自動驗證。下面這個區塊標記了 `dtr-run`，每次 push 都會由
+[docs-that-run](https://github.com/gfr211306-crypto/docs-that-run) 實際執行；
+只要有任何一個名稱被改名或移除，CI 就會變紅，文件不會默默過期。
+
+```python dtr-run
+from studyforge import (
+    AnalysisResult,
+    CEFRProfile,
+    StudyForge,
+    VocabularyItem,
+    analyze_pdf,
+    analyze_pdf_bytes,
+    export_rows,
+    export_vocabulary,
+)
+
+print("public API 與文件一致")
+```
+
 ### 匯入 Anki
 
 1. 在 Anki 選擇 **檔案 → 匯入**。
