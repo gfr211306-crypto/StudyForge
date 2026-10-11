@@ -1,0 +1,21 @@
+name: upgrade-impact
+
+on: pull_request
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  upgrade-impact:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - id: metadata
+        uses: dependabot/fetch-metadata@v3
+      - uses: gfr211306-crypto/upgrade-impact@v0.2.0
+        with:
+          updated-dependencies-json: ${{ steps.metadata.outputs.updated-dependencies-json }}
