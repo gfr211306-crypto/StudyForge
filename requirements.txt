@@ -1,5 +1,5 @@
 streamlit==1.64.0
 PyMuPDF==1.28.2
-pandas==2.3.3
+pandas==3.0.6
 opencc-python-reimplemented==0.1.7
 -e .
